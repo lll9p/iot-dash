@@ -1,5 +1,5 @@
 # config.py
-from config import app_home, debug
+from .config import app_home, debug
 
 debug = debug
 loglevel = 'error'
