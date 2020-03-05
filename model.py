@@ -140,26 +140,26 @@ class NASState():
             f", 15Min@{self.loads.Minutes15}\n"
         result += "CPU:\n"
         for index, core in enumerate(self.cpu):
-            result += f"\nCore {index}: " +\
+            result += f"\tCore {index}: " +\
                 f"Temperature: {core.Temperature} " +\
                 f"Frequency: {core.Frequency.Current} " +\
                 f"Usage: {core.Useage}\n"
         result += "Partitions:\n"
         for partition in self.partitions:
-            result += f"{partition.MountPoint}: " +\
+            result += f"\tMountPoint '{partition.MountPoint}': " +\
                 f"Total(MiB) -> {partition.Total} " +\
                 f"Free(MiB) -> {partition.Free} " +\
                 f"Useage(%) -> " +\
                 f"{100*(partition.Total-partition.Free)/partition.Total} \n"
         result += "Memory:\n"
-        result += f"Total(MiB) -> {self.memory.Total} "
+        result += f"\tTotal(MiB) -> {self.memory.Total} "
         f"Available(MiB) -> {self.memory.Available}"
         f"Available(%) -> "
-        f"{self.memory.Available*100/self.memory.Total}"
+        f"{self.memory.Available*100/self.memory.Total}\n"
         result += "Swap:\n"
         swap_avail = (self.swap.Total - self.swap.Used) * 100 / \
             self.swap.Total if self.swap.Total > 0 else 0
-        result += f"Total(MiB) -> {self.swap.Total} " +\
+        result += f"\tTotal(MiB) -> {self.swap.Total} " +\
             f"Availiable(MiB) -> {self.swap.Total-self.swap.Used} " +\
             f"Available(%) -> " +\
             f"{swap_avail}"
