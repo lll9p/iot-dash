@@ -7,6 +7,7 @@ import plotly.graph_objs as graph_objs
 import plotly.subplots as subplots
 from dash.dependencies import Input, Output
 
+from config import debug
 from model import NASState, Sensor
 
 app = dash.Dash(__name__)
@@ -172,4 +173,4 @@ def update_NAS_state_gragh(n_clicks, n_intervals):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0')
+    app.run_server(debug=debug, host='127.0.0.1')
