@@ -1,10 +1,9 @@
 # config.py
-from .config import app_home, debug
 
-debug = debug
+debug = False
 loglevel = 'error'
 bind = "127.0.0.1:8050"
-chdir = app_home
+chdir = "/home/lao/data/monitor-dash"
 pidfile = "/var/log/gunicorn/gunicorn.pid"
 accesslog = "/var/log/gunicorn/access.log"
 errorlog = "/var/log/gunicorn/debug.log"
