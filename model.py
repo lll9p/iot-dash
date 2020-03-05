@@ -157,10 +157,12 @@ class NASState():
         f"Available(%) -> "
         f"{self.memory.Available*100/self.memory.Total}"
         result += "Swap:\n"
+        swap_avail = (self.swap.Total - self.swap.Used) * 100 / \
+            self.swap.Total if self.swap.Total > 0 else 0
         result += f"Total(MiB) -> {self.swap.Total} "
         f"Availiable(MiB) -> {self.swap.Total-self.swap.Used} "
         f"Available(%) -> "
-        f"{(self.swap.Total-self.swap.Used)*100/self.swap.Total}"
+        f"{swap_avail}"
         return result
 
 
