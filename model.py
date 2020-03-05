@@ -2,12 +2,12 @@ import contextlib
 import datetime
 from collections import namedtuple
 
+import psutil
 import sqlalchemy
 from sqlalchemy import Column, DateTime, Numeric, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-import psutil
 from config import db_host, db_name, db_password, db_user
 
 
@@ -48,17 +48,27 @@ Humidity={self.humidity}"""
                 session.close()
         return get_session
 
-    def get_data_by_time(self: type, time_after: str) \
+    def get_data_by_time(self: type, start_date: str, end_date: str) \
             -> sqlalchemy.orm.query.Query:
         data = None
+        today_ = datetime.date.today()
+        start_date_ = datetime.date.fromisoformat(start_date)
+        end_date_ = datetime.date.fromisoformat(end_date)
+        if start_date_ >= end_date_:
+            start_date = str(
+                end_date_ - datetime.timedelta(days=1))
+        if (start_date_ > today_) or (end_date_ > today_):
+            start_date = str(today_)
+            end_date = str(today_ - datetime.timedelta(days=1))
         with self.session() as session:
             data = session.query(
                 self.model).filter(
-                self.model.time > time_after)
+                self.model.time.between(start_date, end_date)
+            )
         return self.transpose(data)
 
-    def transpose(self: type, data: sqlalchemy.orm.query.Query) \
-            -> [datetime.datetime, float, float]:
+    def transpose(self: type, data: sqlalchemy.orm.query.Query) -> \
+            [datetime.datetime, float, float]:
         result = zip(*((model.time, model.temperature, model.humidity)
                        for model in data.all()))
         return result
@@ -135,35 +145,35 @@ class NASState():
         self.get_swap()
 
     def __repr__(self):
-        result = f"Loads: 1Min@{self.loads.Minutes1:.1f}" +\
-            f", 5Min@{self.loads.Minutes5:.1f}" +\
+        result = f"Loads: 1Min@{self.loads.Minutes1:.1f}" + \
+            f", 5Min@{self.loads.Minutes5:.1f}" + \
             f", 15Min@{self.loads.Minutes15:.1f}\n"
         result += "CPU:\n"
         for index, core in enumerate(self.cpu):
-            result += f"\tCore {index}: " +\
-                f"Temperature: {core.Temperature:.1f} " +\
-                f"Frequency: {core.Frequency.Current:.1f} " +\
+            result += f"\tCore {index}: " + \
+                f"Temperature: {core.Temperature:.1f} " + \
+                f"Frequency: {core.Frequency.Current:.1f} " + \
                 f"Usage: {core.Useage:.1f}\n"
         result += "Partitions:\n"
         for partition in self.partitions:
-            usage = 100 * (partition.Total - partition.Free)\
+            usage = 100 * (partition.Total - partition.Free) \
                 / partition.Total
-            result += f"\tMountPoint '{partition.MountPoint}': " +\
-                f"Total(MiB) -> {partition.Total:.1f} " +\
-                f"Free(MiB) -> {partition.Free:.1f} " +\
-                f"Useage(%) -> " +\
+            result += f"\tMountPoint '{partition.MountPoint}': " + \
+                f"Total(MiB) -> {partition.Total:.1f} " + \
+                f"Free(MiB) -> {partition.Free:.1f} " + \
+                f"Useage(%) -> " + \
                 f"{usage: .1f} \n"
         result += "Memory:\n"
-        result += f"\tTotal(MiB) -> {self.memory.Total:.1f} " +\
-            f"Available(MiB) -> {self.memory.Available:.1f} " +\
-            f"Available(%) -> " +\
+        result += f"\tTotal(MiB) -> {self.memory.Total:.1f} " + \
+            f"Available(MiB) -> {self.memory.Available:.1f} " + \
+            f"Available(%) -> " + \
             f"{(self.memory.Available*100/self.memory.Total):.1f}\n"
         result += "Swap:\n"
         swap_avail = (self.swap.Total - self.swap.Used) * 100 / \
             self.swap.Total if self.swap.Total > 0 else 0
-        result += f"\tTotal(MiB) -> {self.swap.Total:.1f} " +\
-            f"Availiable(MiB) -> {(self.swap.Total-self.swap.Used):.1f} " +\
-            f"Available(%) -> " +\
+        result += f"\tTotal(MiB) -> {self.swap.Total:.1f} " + \
+            f"Availiable(MiB) -> {(self.swap.Total-self.swap.Used):.1f} " + \
+            f"Available(%) -> " + \
             f"{swap_avail:.1f}"
         return result
 
