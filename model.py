@@ -135,12 +135,33 @@ class NASState():
         self.get_swap()
 
     def __repr__(self):
-        return f"""CPU:{self.cpu}
-loads:{self.loads}
-partitions:{self.partitions}
-memory:{self.memory}
-swap:{self.swap}
-"""
+        result = f"Loads: 1Min@{self.loads.Minutes1}"
+        f", 5Min@{self.loads.Minutes5}"
+        f", 15Min@{self.loads.Minutes15}\n"
+        result += "CPU:\n"
+        for index, core in enumerate(self.cpu):
+            result += f"\nCore {index}: "
+            f"Temperature: {core.Temperature} "
+            f"Frequency: {core.Frequency.Current} "
+            f"Usage: {core.usage}\n"
+        result += "Partitions:\n"
+        for partition in self.partitions:
+            result += f"{partition.MountPoint}: "
+            f"Total(MiB) -> {partition.Total} "
+            f"Free(MiB) -> {partition.Free} "
+            f"Useage(%) -> "
+            f"{100*(partition.Total-partition.Free)/partition.Total} \n"
+        result += "Memory:\n"
+        result += f"Total(MiB) -> {self.memory.Total} "
+        f"Available(MiB) -> {self.memory.Available}"
+        f"Available(%) -> "
+        f"{self.memory.Available*100/self.memory.Total}"
+        result += "Swap:\n"
+        result += f"Total(MiB) -> {self.swap.Total} "
+        f"Availiable(MiB) -> {self.swap.Total-self.swap.Used} "
+        f"Available(%) -> "
+        f"{(self.swap.Total-self.swap.Used)*100/self.swap.Total}"
+        return result
 
 
 if __name__ == '__main__':
