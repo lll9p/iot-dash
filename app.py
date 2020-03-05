@@ -50,14 +50,12 @@ app.layout = html.Div(children=[
     ),
     html.H2(children='NAS Monitor'),
     html.Button('Click here to view NAS state.', id='show-NAS-state'),
-    dcc.Graph(
-        id='NAS-state-gragh',
-    ),
+    html.Div(id='NAS-state'),
 ])
 
 
-@app.callback(Output(component_id='NAS-state-gragh',
-                     component_property='figure'),
+@app.callback(Output(component_id='NAS-state',
+                     component_property='children'),
               [Input(component_id='show-NAS-state',
                      component_property='n_clicks')])
 def update_NAS_state_gragh(n_clicks):
@@ -65,23 +63,7 @@ def update_NAS_state_gragh(n_clicks):
         raise PreventUpdate
     else:
         NAS_state = NASState()
-        # fig = tools.make_subplots(
-        #    rows=5, cols=1,
-        #    subplot_titles=('CPU', 'Loads', 'Memory', 'Swap', 'Partitions')
-        # )
-        fig_cpu = tools.make_subplots(
-            rows=1, cols=1,
-            subplot_titles=('Temperature')  # , 'Frequency', 'Useage')
-        )
-        cpu_temperature = [_.Temperature for _ in NAS_state.cpu]
-        fig_cpu.append_trace(
-            {
-                'x': list(range(0, len(cpu_temperature), 1)),
-                'y': cpu_temperature,
-                'type': 'bar',
-            }, 1, 1
-        )
-        return fig_cpu
+        return html.Pre(str(NAS_state))
 
 
 if __name__ == '__main__':
