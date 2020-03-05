@@ -103,8 +103,8 @@ class NASState():
     def get_memory(self):
         memory = namedtuple("Memory", ("Total", "Available"))
         memory.Total, memory.Available, *_ = psutil.virtual_memory()
-        memory.Total = self.bytes2Mib(memory.Total)
-        memory.Available = self.bytes2Mib(memory.Available)
+        memory.Total = self.bytes2MiB(memory.Total)
+        memory.Available = self.bytes2MiB(memory.Available)
         self.memory = memory
 
     def get_partitions(self):
@@ -117,15 +117,15 @@ class NASState():
             self.partitions.append(
                 Partition._make(
                     (_.mountpoint,
-                     self.bytes2Mib(_usage.total),
-                     self.bytes2Mib(_usage.free))
+                     self.bytes2MiB(_usage.total),
+                     self.bytes2MiB(_usage.free))
                 )
             )
 
     def get_swap(self):
         Swap = namedtuple("Swap", ("Total", "Used"))
         self.swap = Swap._make(
-            map(lambda _: self.bytes2Mib(_), psutil.swap_memory()[:2]))
+            map(lambda _: self.bytes2MiB(_), psutil.swap_memory()[:2]))
 
     def update(self):
         self.get_cpu()
