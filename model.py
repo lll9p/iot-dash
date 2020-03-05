@@ -1,11 +1,13 @@
 import contextlib
 import datetime
+from collections import namedtuple
 
 import sqlalchemy
 from sqlalchemy import Column, DateTime, Numeric, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+import psutil
 from config import db_host, db_name, db_password, db_user
 
 
@@ -60,3 +62,86 @@ Humidity={self.humidity}"""
         result = zip(*((model.time, model.temperature, model.humidity)
                        for model in data.all()))
         return result
+
+
+class NASState():
+    def __init__(self):
+        self.memory = None
+        self.swap = None
+        self.partitions = None
+        self.cpu = None
+        self.loads = None
+        # (0.19, 0.2, 0.17)
+        # 1min 5min 15min
+
+    def bytes2MiB(self, size):
+        return size / 1048576
+
+    def get_cpu(self):
+        Core = namedtuple("Core", ("Temperature", "Frequency", "Useage"))
+        Frequency = namedtuple("Frequency", ("Current", "Min", "Max"))
+        temperatures = list()
+        for _ in psutil.sensors_temperatures()['coretemp']:
+            if _.label.startswith('Core'):
+                temperatures.append(_.current)
+        cpu = list()
+        for temperature, frequency, useage in zip(temperatures,
+                                                  psutil.cpu_freq(percpu=True),
+                                                  psutil.cpu_percent(
+                                                      percpu=True)
+                                                  ):
+            freq = Frequency._make(frequency)
+            cpu.append(Core._make((temperature, freq, useage)))
+        self.cpu = cpu
+
+    def get_loads(self):
+        Loads = namedtuple(
+            "Loads", ("Max", "Minutes1", "Minutes5", "Minutes15"))
+        self.loads = Loads._make((psutil.cpu_count(),) + psutil.getloadavg())
+
+    def get_memory(self):
+        memory = namedtuple("Memory", ("Total", "Available"))
+        memory.Total, memory.Available, *_ = psutil.virtual_memory()
+        memory.Total = self.bytes2Mib(memory.Total)
+        memory.Available = self.bytes2Mib(memory.Available)
+        self.memory = memory
+
+    def get_partitions(self):
+        Partition = namedtuple(
+            "Partition", ("MountPoint", "Total", "Free"))
+        partitions = psutil.disk_partitions()
+        self.partitions = list()
+        for _ in partitions:
+            _usage = psutil.disk_usage(_.mountpoint)
+            self.partitions.append(
+                Partition._make(
+                    (_.mountpoint,
+                     self.bytes2Mib(_usage.total),
+                     self.bytes2Mib(_usage.free))
+                )
+            )
+
+    def get_swap(self):
+        Swap = namedtuple("Swap", ("Total", "Used"))
+        self.swap = Swap._make(
+            map(lambda _: self.bytes2Mib(_), psutil.swap_memory()[:2]))
+
+    def update(self):
+        self.get_cpu()
+        self.get_loads()
+        self.get_memory()
+        self.get_partitions()
+        self.get_swap()
+
+    def __repr__(self):
+        return f"""CPU:{self.cpu}
+loads:{self.loads}
+partitions:{self.partitions}
+memory:{self.memory}
+swap:{self.swap}
+"""
+
+
+if __name__ == '__main__':
+    NAS_state = NASState()
+    print(NAS_state)
