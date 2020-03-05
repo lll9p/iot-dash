@@ -91,10 +91,14 @@ class NASState():
     def get_cpu(self):
         Core = namedtuple("Core", ("Temperature", "Frequency", "Useage"))
         Frequency = namedtuple("Frequency", ("Current", "Min", "Max"))
-        temperatures = list()
-        for _ in psutil.sensors_temperatures()['coretemp']:
-            if _.label.startswith('Core'):
-                temperatures.append(_.current)
+        if not psutil.WINDOWS:
+            # Function sensors_temperatures is not available on Windows.
+            temperatures = list()
+            for _ in psutil.sensors_temperatures()['coretemp']:
+                if _.label.startswith('Core'):
+                    temperatures.append(_.current)
+        else:
+            temperatures = [-1] * psutil.cpu_count()
         cpu = list()
         for temperature, frequency, useage in zip(temperatures,
                                                   psutil.cpu_freq(percpu=True),
