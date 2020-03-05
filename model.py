@@ -146,16 +146,18 @@ class NASState():
                 f"Usage: {core.Useage:.1f}\n"
         result += "Partitions:\n"
         for partition in self.partitions:
+            usage = 100 * (partition.Total - partition.Free)\
+                / partition.Total
             result += f"\tMountPoint '{partition.MountPoint}': " +\
                 f"Total(MiB) -> {partition.Total:.1f} " +\
                 f"Free(MiB) -> {partition.Free:.1f} " +\
                 f"Useage(%) -> " +\
-                f"{(100*(partition.Total-partition.Free)/partition.Total):.1f} \n"
+                f"{usage: .1f} \n"
         result += "Memory:\n"
-        result += f"\tTotal(MiB) -> {self.memory.Total:.1f} "
-        f"Available(MiB) -> {self.memory.Available:.1f}"
-        f"Available(%) -> "
-        f"{(self.memory.Available*100/self.memory.Total):.1f}\n"
+        result += f"\tTotal(MiB) -> {self.memory.Total:.1f} " +\
+            f"Available(MiB) -> {self.memory.Available:.1f}" +\
+            f"Available(%) -> " +\
+            f"{(self.memory.Available*100/self.memory.Total):.1f}\n"
         result += "Swap:\n"
         swap_avail = (self.swap.Total - self.swap.Used) * 100 / \
             self.swap.Total if self.swap.Total > 0 else 0
