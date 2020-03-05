@@ -16,9 +16,10 @@ app = dash.Dash(__name__)
 app.layout = html.Div(children=[
     html.H1(children='Monitor'),
     html.H2(children='Sensor Monitor'),
-    dcc.Input(id='date-input',
-              type='Date',
-              value=datetime.date.today()),
+    dcc.DatePickerRange(
+        id='date-picker-range',
+        start_date=datetime.date.today(),
+        end_date=datetime.date.today()),
     dcc.Graph(
         id='sensor-graph',
         figure={
