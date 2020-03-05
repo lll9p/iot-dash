@@ -97,11 +97,11 @@ def update_sensor_gragh(start_date, end_date):
               [Input(component_id='show-NAS-state',
                      component_property='n_clicks')])
 def update_NAS_state_gragh(n_clicks):
-    if n_clicks is None:
-        raise PreventUpdate
-    else:
-        NAS_state = NASState()
-        return html.Pre(str(NAS_state))
+    # if n_clicks is None:
+    #    raise PreventUpdate
+    # else:
+    NAS_state = NASState()
+    return html.Pre(str(NAS_state))
 
 
 if __name__ == '__main__':
