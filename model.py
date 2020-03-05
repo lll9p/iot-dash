@@ -143,7 +143,7 @@ class NASState():
             result += f"\nCore {index}: "
             f"Temperature: {core.Temperature} "
             f"Frequency: {core.Frequency.Current} "
-            f"Usage: {core.Usage}\n"
+            f"Usage: {core.Useage}\n"
         result += "Partitions:\n"
         for partition in self.partitions:
             result += f"{partition.MountPoint}: "
