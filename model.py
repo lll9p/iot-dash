@@ -71,6 +71,7 @@ class NASState():
         self.partitions = None
         self.cpu = None
         self.loads = None
+        self.update()
         # (0.19, 0.2, 0.17)
         # 1min 5min 15min
 
