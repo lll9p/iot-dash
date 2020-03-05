@@ -18,7 +18,7 @@ app.layout = html.Div(children=[
     html.H2(children='Sensor Monitor'),
     dcc.Input(id='date-input',
               type='Date',
-              value=datetime.today()),
+              value=datetime.date.today()),
     dcc.Graph(
         id='sensor-graph',
         figure={
