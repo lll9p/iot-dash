@@ -137,8 +137,8 @@ class NASState():
     def __repr__(self):
         result = f"Loads: 1Min@{self.loads.Minutes1}" +\
             f", 5Min@{self.loads.Minutes5}" +\
-            f", 15Min@{self.loads.Minutes15}\n" +\
-            result += "CPU:\n"
+            f", 15Min@{self.loads.Minutes15}\n"
+        result += "CPU:\n"
         for index, core in enumerate(self.cpu):
             result += f"\nCore {index}: " +\
                 f"Temperature: {core.Temperature} " +\
