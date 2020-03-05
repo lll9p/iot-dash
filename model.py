@@ -123,18 +123,20 @@ class NASState():
 
     def get_partitions(self):
         Partition = namedtuple(
-            "Partition", ("MountPoint", "Total", "Free"))
+            "Partition", ("Device", "MountPoint", "Total", "Free"))
         partitions = psutil.disk_partitions()
         self.partitions = list()
         for _ in partitions:
             _usage = psutil.disk_usage(_.mountpoint)
             self.partitions.append(
                 Partition._make(
-                    (_.mountpoint,
+                    (_.device,
+                     _.mountpoint,
                      self.bytes2MiB(_usage.total),
                      self.bytes2MiB(_usage.free))
                 )
             )
+        self.partitions.sort(key=lambda _: _[0])
 
     def get_swap(self):
         Swap = namedtuple("Swap", ("Total", "Used"))
@@ -165,13 +167,14 @@ class NASState():
                 f"| {core.Useage:>10.1f} |\n"
         result += '\n'
         result += f"""### Partitions
-| MountPoint | Total(MiB) | Free(MiB) | Usage(%) |
-| :--------: | :--------: | :-------: | :------: |
+| Device | MountPoint | Total(MiB) | Free(MiB) | Usage(%) |
+| :----: | :--------: | :--------: | :-------: | :------: |
 """
         for partition in self.partitions:
             usage = 100 * (partition.Total - partition.Free) \
                 / partition.Total
-            result += f"| {partition.MountPoint} " + \
+            result += f"| {partition.Device} " + \
+                f"| {partition.MountPoint} " + \
                 f"| {partition.Total:.1f} " + \
                 f"| {partition.Free:.1f} " + \
                 f"| {usage:.1f} |\n"
