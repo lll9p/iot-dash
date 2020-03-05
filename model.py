@@ -155,7 +155,7 @@ class NASState():
                 f"{usage: .1f} \n"
         result += "Memory:\n"
         result += f"\tTotal(MiB) -> {self.memory.Total:.1f} " +\
-            f"Available(MiB) -> {self.memory.Available:.1f}" +\
+            f"Available(MiB) -> {self.memory.Available:.1f} " +\
             f"Available(%) -> " +\
             f"{(self.memory.Available*100/self.memory.Total):.1f}\n"
         result += "Swap:\n"

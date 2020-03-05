@@ -1,3 +1,5 @@
+import datetime
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -14,6 +16,9 @@ app = dash.Dash(__name__)
 app.layout = html.Div(children=[
     html.H1(children='Monitor'),
     html.H2(children='Sensor Monitor'),
+    dcc.Input(id='date-input',
+              type='Date',
+              value=datetime.today()),
     dcc.Graph(
         id='sensor-graph',
         figure={
