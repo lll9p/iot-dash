@@ -149,36 +149,50 @@ class NASState():
         self.get_swap()
 
     def __repr__(self):
-        result = f"Loads: 1Min@{self.loads.Minutes1:.1f}" + \
-            f", 5Min@{self.loads.Minutes5:.1f}" + \
-            f", 15Min@{self.loads.Minutes15:.1f}\n"
-        result += "CPU:\n"
+        result = f"""### Loads
+| 1Min | 5Min | 15Min |
+| :----: | :----: | :-----: |
+| {self.loads.Minutes1:.1f} | """ + \
+            f"{self.loads.Minutes5:>.1f} | {self.loads.Minutes15:.1f} |\n" + \
+            f"""### CPU
+| Core | Temperature(℃) | Frequency(MHz) | Usage(%) |
+| :--: | :--: | :--: | :--: |
+"""
         for index, core in enumerate(self.cpu):
-            result += f"\tCore {index}: " + \
-                f"Temperature: {core.Temperature:.1f} " + \
-                f"Frequency: {core.Frequency.Current:.1f} " + \
-                f"Usage: {core.Useage:.1f}\n"
-        result += "Partitions:\n"
+            result += f"| {index} " + \
+                f"| {core.Temperature:.1f} " + \
+                f"| {core.Frequency.Current:.1f} " + \
+                f"| {core.Useage:>10.1f} |\n"
+        result += '\n'
+        result += f"""### Partitions
+| MountPoint | Total(MiB) | Free(MiB) | Usage(%) |
+| :--------: | :--------: | :-------: | :------: |
+"""
         for partition in self.partitions:
             usage = 100 * (partition.Total - partition.Free) \
                 / partition.Total
-            result += f"\tMountPoint '{partition.MountPoint}': " + \
-                f"Total(MiB) -> {partition.Total:.1f} " + \
-                f"Free(MiB) -> {partition.Free:.1f} " + \
-                f"Useage(%) -> " + \
-                f"{usage: .1f} \n"
-        result += "Memory:\n"
-        result += f"\tTotal(MiB) -> {self.memory.Total:.1f} " + \
-            f"Available(MiB) -> {self.memory.Available:.1f} " + \
-            f"Available(%) -> " + \
-            f"{(self.memory.Available*100/self.memory.Total):.1f}\n"
-        result += "Swap:\n"
+            result += f"| {partition.MountPoint} " + \
+                f"| {partition.Total:.1f} " + \
+                f"| {partition.Free:.1f} " + \
+                f"| {usage:.1f} |\n"
+        result += '\n'
+        result += f"""### Memory
+| Total(MiB) | Available(MiB) | Available(%) |
+| :--------: | :------------: | :----------: |
+"""
+        result += f"| {self.memory.Total:.1f} " + \
+            f"| {self.memory.Available:.1f} " + \
+            f"| {(self.memory.Available*100/self.memory.Total):.1f} |\n"
+        result += '\n'
+        result += f"""### Swap
+| Total(MiB) | Available(MiB) | Available(%) |
+| :--------: | :------------: | :----------: |
+"""
         swap_avail = (self.swap.Total - self.swap.Used) * 100 / \
             self.swap.Total if self.swap.Total > 0 else 0
-        result += f"\tTotal(MiB) -> {self.swap.Total:.1f} " + \
-            f"Availiable(MiB) -> {(self.swap.Total-self.swap.Used):.1f} " + \
-            f"Available(%) -> " + \
-            f"{swap_avail:.1f}"
+        result += f"| {self.swap.Total:.1f} " + \
+            f"| {(self.swap.Total-self.swap.Used):.1f} " + \
+            f"| {swap_avail:.1f} |\n"
         return result
 
 
