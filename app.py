@@ -73,6 +73,10 @@ app.layout = html.Div(
                         #     interval=10 * 1000,
                         #     n_intervals=0
                         # ),
+
+                        html.Button(
+                            'Reflash graph.',
+                            id='reflash-sensor-graph'),
                         dcc.Graph(
                             id='sensor-graph',
                         ),
@@ -92,11 +96,13 @@ end_date = str(datetime.date.today())
                      component_property='start_date'),
                Input(component_id='sensor-date-picker-range',
                      component_property='end_date'),
+               Input(component_id='reflash-sensor-graph',
+                     component_property='n_clicks'),
                # Input(component_id='interval-sensor',
                #       component_property='n_intervals')
                ],
               )
-def update_sensor_gragh(start_date, end_date):
+def update_sensor_gragh(start_date, end_date,n_clicks):
     data = list(sensor.get_data_by_time(start_date, end_date))
     fig = subplots.make_subplots(rows=1, cols=1)
     trace_temperature = graph_objs.Scattergl(
