@@ -11,6 +11,7 @@ from config import debug
 from model import NASState, Sensor
 
 app = dash.Dash(__name__)
+
 tabs_styles = {
     'height': '44px'
 }
@@ -171,6 +172,7 @@ def update_NAS_state_gragh(n_clicks, n_intervals):
     NAS_state = NASState()
     return str(NAS_state)
 
+server = app.server
 
 if __name__ == '__main__':
-    app.run_server(debug=debug, host='127.0.0.1')
+    app.run_server(debug=debug)
