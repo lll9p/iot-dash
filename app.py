@@ -81,9 +81,8 @@ app.layout = html.Div(
 
 
 sensor = Sensor()
-# start_date = str(datetime.date.today() - datetime.timedelta(days=1))
-# end_date = str(datetime.date.today())
-# data = list(sensor.get_data_by_time(start_date, end_date))
+start_date = str(datetime.date.today() - datetime.timedelta(days=1))
+end_date = str(datetime.date.today())
 
 
 @app.callback(Output(component_id='sensor-graph',
@@ -96,7 +95,7 @@ sensor = Sensor()
                #       component_property='n_intervals')
                ],
               )
-def update_sensor_gragh(start_date, end_date, n_intervals):
+def update_sensor_gragh(start_date, end_date):
     data = list(sensor.get_data_by_time(start_date, end_date))
     fig = subplots.make_subplots(rows=1, cols=1)
     trace_temperature = graph_objs.Scatter(
