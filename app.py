@@ -67,11 +67,11 @@ app.layout = html.Div(
                             with_portal=True,
 
                         ),
-                        dcc.Interval(
-                            id='interval-sensor',
-                            interval=10 * 1000,
-                            n_intervals=0
-                        ),
+                        # dcc.Interval(
+                        #     id='interval-sensor',
+                        #     interval=10 * 1000,
+                        #     n_intervals=0
+                        # ),
                         dcc.Graph(
                             id='sensor-graph',
                         ),
@@ -92,8 +92,9 @@ sensor = Sensor()
                      component_property='start_date'),
                Input(component_id='sensor-date-picker-range',
                      component_property='end_date'),
-               Input(component_id='interval-sensor',
-                     component_property='n_intervals')],
+               # Input(component_id='interval-sensor',
+               #       component_property='n_intervals')
+               ],
               )
 def update_sensor_gragh(start_date, end_date, n_intervals):
     data = list(sensor.get_data_by_time(start_date, end_date))
@@ -171,6 +172,7 @@ def update_NAS_state_gragh(n_clicks, n_intervals):
     # else:
     NAS_state = NASState()
     return str(NAS_state)
+
 
 server = app.server
 
