@@ -1,4 +1,5 @@
 import datetime
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -102,7 +103,7 @@ end_date = str(datetime.date.today())
                #       component_property='n_intervals')
                ],
               )
-def update_sensor_gragh(start_date, end_date,n_clicks):
+def update_sensor_gragh(start_date, end_date, n_clicks):
     data = list(sensor.get_data_by_time(start_date, end_date))
     fig = subplots.make_subplots(rows=1, cols=1)
     trace_temperature = graph_objs.Scattergl(
