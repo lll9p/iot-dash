@@ -57,7 +57,11 @@ Humidity={self.humidity}"""
         if start_date_ >= end_date_:
             start_date = str(
                 end_date_ - datetime.timedelta(days=1))
-        if (start_date_ > today_) or (end_date_ > today_):
+        if end_date_ == today_:
+            # not just monitor from today 00:00
+            end_date = str(today_ + datetime.timedelta(days=1))
+        if (start_date_ > today_) or (end_date_ >
+                                      today_ + datetime.timedelta(days=1)):
             start_date = str(today_)
             end_date = str(today_ - datetime.timedelta(days=1))
         with self.session() as session:
