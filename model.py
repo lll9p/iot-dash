@@ -1,5 +1,6 @@
 import contextlib
 import datetime
+from itertools import islice
 from collections import namedtuple
 
 import psutil
@@ -7,9 +8,19 @@ import sqlalchemy
 from sqlalchemy import Column, DateTime, Numeric, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func
 
 from config import db_host, db_name, db_password, db_user
-
+def window(seq, n=2):
+    "Returns a sliding window (of width n) over data from the iterable"
+    "   s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ...                   "
+    it = iter(seq)
+    result = tuple(islice(it, n))
+    if len(result) == n:
+        yield result
+    for elem in it:
+        result = result[1:] + (elem,)
+        yield result
 
 class Sensor():
     def __init__(self):
@@ -18,6 +29,7 @@ class Sensor():
         self.Session = sessionmaker(bind=engine)
         self.session = self.create_session()
         self.model = self.create_model()
+        self.filter_on = True
 
     def create_model(self):
         Base = declarative_base()
@@ -67,15 +79,52 @@ Humidity={self.humidity}"""
         with self.session() as session:
             data = session.query(
                 self.model).filter(
-                self.model.time.between(start_date, end_date)
-            )
+                self.model.time.between(start_date, end_date),)
         return self.transpose(data)
 
     def transpose(self: type, data: sqlalchemy.orm.query.Query) -> \
             [datetime.datetime, float, float]:
+        data=data.all()
+        if self.filter_on:
+           len_data=len(data)
+           for i in range(0,len_data,3):
+               if len_data-i<3:
+                  break
+               max_ = data[i] if data[i].temperature>data[i+1].temperature else data[i+1]
+               max_ = max_ if max_.temperature>data[i+2].temperature else data[i+2]
+               min_ = data[i] if data[i].temperature<data[i+1].temperature else data[i+1]
+               min_ = min_ if min_.temperature<data[i+2].temperature else data[i+2]
+               if abs(max_.temperature-min_.temperature)>9.0:
+                   mean = sum(_.temperature for _ in data[i:i+3])/3
+                   if abs(max_.temperature-mean)>abs(min_.temperature-mean):
+                       max_.time=None
+                   else:
+                       min_.time=None
+               max_ = data[i] if data[i].humidity>data[i+1].humidity else data[i+1]
+               max_ = max_ if max_.humidity>data[i+2].humidity else data[i+2]
+               min_ = data[i] if data[i].humidity<data[i+1].humidity else data[i+1]
+               min_ = min_ if min_.humidity<data[i+2].humidity else data[i+2]
+               if abs(max_.humidity-min_.humidity)>13.0:
+                   mean = sum(_.humidity for _ in data[i:i+3])/3
+                   if abs(max_.humidity-mean)>abs(min_.humidity-mean):
+                       max_.time=None
+                   else:
+                       min_.time=None
+           data=filter(lambda _:_.time,data)
         result = zip(*((model.time, model.temperature, model.humidity)
-                       for model in data.all()))
+                       for model in data))
         return result
+    def statistics(self,data):
+        # find 2 point difference absolute
+        # temperature diff should <=9.3
+        # humidity diff should <= 13.0
+        data=list(data)
+        point_diff1 = list(abs(i-j) for i,j in window(data[1]))
+        point_diff2 = list(abs(i-j) for i,j in window(data[2]))
+        with open('point_diff1',mode='w') as file:
+            file.write(str(point_diff1))
+        with open('point_diff2',mode='w') as file:
+            file.write(str(point_diff2))
 
 
 class NASState():
@@ -204,5 +253,5 @@ class NASState():
 
 
 if __name__ == '__main__':
-    NAS_state = NASState()
-    print(NAS_state)
+    sensor = Sensor()
+    d=list(sensor.get_data_by_time("2019-05-01","2020-03-06"))

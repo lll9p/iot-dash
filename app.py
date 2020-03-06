@@ -1,5 +1,4 @@
 import datetime
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -30,6 +29,8 @@ tab_selected_style = {
 }
 
 app.title = "Monitor"
+app.css.config.serve_locally = True
+app.scripts.config.serve_locally = True
 app.layout = html.Div(
     children=[
         html.H1(children='Monitor'),
@@ -98,13 +99,13 @@ end_date = str(datetime.date.today())
 def update_sensor_gragh(start_date, end_date):
     data = list(sensor.get_data_by_time(start_date, end_date))
     fig = subplots.make_subplots(rows=1, cols=1)
-    trace_temperature = graph_objs.Scatter(
+    trace_temperature = graph_objs.Scattergl(
         x=data[0],
         y=data[1],
         mode='lines+markers',
         name='Temperature'
     )
-    trace_humidity = graph_objs.Scatter(
+    trace_humidity = graph_objs.Scattergl(
         x=data[0],
         y=data[2],
         mode='lines+markers',
