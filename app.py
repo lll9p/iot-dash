@@ -49,11 +49,6 @@ app.layout = html.Div(
                             n_intervals=0
                         ),
                         dcc.Markdown(id='NAS-state'),
-                        dcc.Interval(
-                            id='interval-sensor',
-                            interval=10 * 1000,
-                            n_intervals=0
-                        ),
                     ]),
             dcc.Tab(label='Sensor Monitor', value='tab-Sensor',
                     style=tab_style,
@@ -71,6 +66,11 @@ app.layout = html.Div(
                             display_format='YYYY-MM-DD',
                             with_portal=True,
 
+                        ),
+                        dcc.Interval(
+                            id='interval-sensor',
+                            interval=10 * 1000,
+                            n_intervals=0
                         ),
                         dcc.Graph(
                             id='sensor-graph',
