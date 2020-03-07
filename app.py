@@ -67,7 +67,7 @@ app.layout = html.Div(
                             start_date_placeholder_text='Start date',
                             display_format='YYYY-MM-DD',
                             with_portal=True,
-
+                            updatemode='bothdates',
                         ),
                         # dcc.Interval(
                         #     id='interval-sensor',
@@ -105,16 +105,19 @@ end_date = str(datetime.date.today())
               )
 def update_sensor_gragh(start_date, end_date, n_clicks):
     data = list(sensor.get_data_by_time(start_date, end_date))
+    time=tuple(_.isoformat() for _ in data[0])
+    temperature=data[1]
+    humidity=data[2]
     fig = subplots.make_subplots(rows=1, cols=1)
     trace_temperature = graph_objs.Scattergl(
-        x=data[0],
-        y=data[1],
+        x=time,
+        y=temperature,
         mode='lines+markers',
         name='Temperature'
     )
     trace_humidity = graph_objs.Scattergl(
-        x=data[0],
-        y=data[2],
+        x=time,
+        y=humidity,
         mode='lines+markers',
         name='Humidity'
     )
@@ -140,22 +143,22 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
             yaxis2=dict(overlaying='y1',
                         side='right',
                         linecolor='black',
-                        anchor='x1',
+                        anchor='x',
                         showgrid=True,
                         title='Humidity(%)'),
             hovermode='closest',
             annotations=[dict(
-                x=data[0][-1],
-                y=data[1][-1],
-                text=f"{data[1][-1]:.1f}℃",
+                x=time[-1],
+                y=temperature[-1],
+                text=f"{temperature[-1]:.1f}℃",
                 showarrow=True,
                 xref="x",
                 yref="y"
             ),
                 dict(
-                x=data[0][-1],
-                y=data[2][-1],
-                text=f"{data[2][-1]:.1f}%",
+                x=time[-1],
+                y=humidity[-1],
+                text=f"{humidity[-1]:.1f}%",
                 showarrow=True,
                 xref="x",
                 yref="y2"

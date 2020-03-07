@@ -274,4 +274,4 @@ class NASState():
 
 if __name__ == '__main__':
     sensor = Sensor()
-    d = list(sensor.get_data_by_time("2019-05-01", "2020-03-06"))
+    list(sensor.get_data_by_time("2019-05-01", "2020-03-06"))
