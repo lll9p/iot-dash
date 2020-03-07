@@ -5,7 +5,7 @@ from itertools import islice
 
 import psutil
 import sqlalchemy
-from sqlalchemy import Column, DateTime, Numeric, create_engine, func
+from sqlalchemy import Column, DateTime, Float, create_engine, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -39,8 +39,8 @@ class Sensor():
         class SensorModel(Base):
             __tablename__ = 'records'
             time = Column(DateTime, primary_key=True)
-            temperature = Column(Numeric)
-            humidity = Column(Numeric)
+            temperature = Column(Float)
+            humidity = Column(Float)
 
             def __repr__(self):
                 return f"""Time={self.time}
