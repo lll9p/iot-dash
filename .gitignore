@@ -132,5 +132,5 @@ dmypy.json
 config.py
 
 # Profiles data
-profile.py
+profiler.py
 profiles
