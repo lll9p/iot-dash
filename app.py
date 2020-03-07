@@ -112,14 +112,14 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
     trace_temperature = graph_objs.Scattergl(
         x=time,
         y=temperature,
-        mode='lines+markers',
-        name='Temperature'
+        name='Temperature',
+        mode='lines',
     )
     trace_humidity = graph_objs.Scattergl(
         x=time,
         y=humidity,
-        mode='lines+markers',
-        name='Humidity'
+        name='Humidity',
+        mode='lines',
     )
     fig.append_trace(trace_temperature, 1, 1)
     fig.append_trace(trace_humidity, 1, 1)
@@ -127,6 +127,7 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
         fig.data[1].update(yaxis='y2')
         fig.layout.update(
             # width=600, height=500,
+            plot_bgcolor='#FFF',
             showlegend=True,
             legend=dict(x=0, y=1.2),
             xaxis=dict(
@@ -135,17 +136,22 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
                 mirror=True,
                 # tickformat='%Y-%m-%d',
                 tickmode='auto',
+                type='date',
+                ticks='inside',
             ),
             yaxis1=dict(
                 side='left',
                 linecolor='black',
-                title='Temperature(℃)'),
+                title='Temperature(℃)',
+                ticks='inside',
+                ),
             yaxis2=dict(overlaying='y1',
                         side='right',
                         linecolor='black',
                         anchor='x',
-                        showgrid=True,
-                        title='Humidity(%)'),
+                        title='Humidity(%)',
+                ticks='inside',
+                ),
             hovermode='closest',
             annotations=[dict(
                 x=time[-1],
@@ -153,7 +159,7 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
                 text=f"{temperature[-1]:.1f}℃",
                 showarrow=True,
                 xref="x",
-                yref="y"
+                yref="y1"
             ),
                 dict(
                 x=time[-1],
@@ -187,4 +193,4 @@ def update_NAS_state_gragh(n_clicks, n_intervals):
 server = app.server
 
 if __name__ == '__main__':
-    app.run_server(debug=debug)
+    app.run_server(debug=debug,host='0.0.0.0')
