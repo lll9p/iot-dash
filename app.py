@@ -103,7 +103,7 @@ end_date = str(datetime.date.today())
                ],
               )
 def update_sensor_gragh(start_date, end_date, n_clicks):
-    time,temperature,humidity = sensor.get_data_by_time(start_date, end_date)
+    time, temperature, humidity = sensor.get_data_by_time(start_date, end_date)
     time = tuple(_.isoformat() for _ in time)
     trace_temperature = graph_objs.Scattergl(
         x=time,
@@ -119,10 +119,10 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
         mode='lines',
         yaxis='y2'
     )
-    traces=[trace_temperature,trace_humidity]
+    traces = [trace_temperature, trace_humidity]
     return {
-            'data':traces,
-            'layout':dict(
+        'data': traces,
+        'layout': dict(
             plot_bgcolor='#FFF',
             showlegend=True,
             legend=dict(x=0, y=1.2),
@@ -140,14 +140,14 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
                 linecolor='black',
                 title='Temperature(℃)',
                 ticks='inside',
-                ),
+            ),
             yaxis2=dict(overlaying='y1',
                         side='right',
                         linecolor='black',
                         anchor='x',
                         title='Humidity(%)',
-                ticks='inside',
-                ),
+                        ticks='inside',
+                        ),
             hovermode='closest',
             annotations=[dict(
                 x=time[-1],
@@ -166,8 +166,9 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
                 yref="y2"
             )
             ]
-            )
-            }
+        )
+    }
+
 
 @app.callback(Output(component_id='NAS-state',
                      component_property='children'),
@@ -187,4 +188,4 @@ def update_NAS_state_gragh(n_clicks, n_intervals):
 server = app.server
 
 if __name__ == '__main__':
-    app.run_server(debug=True,host='0.0.0.0')
+    app.run_server(debug=True, host='0.0.0.0')
