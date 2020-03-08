@@ -7,7 +7,6 @@ import plotly.graph_objs as graph_objs
 import plotly.subplots as subplots
 from dash.dependencies import Input, Output
 
-from config import debug
 from model import NASState, Sensor
 
 app = dash.Dash(__name__)
@@ -104,29 +103,26 @@ end_date = str(datetime.date.today())
                ],
               )
 def update_sensor_gragh(start_date, end_date, n_clicks):
-    data = list(sensor.get_data_by_time(start_date, end_date))
-    time=tuple(_.isoformat() for _ in data[0])
-    temperature=data[1]
-    humidity=data[2]
-    fig = subplots.make_subplots(rows=1, cols=1)
+    time,temperature,humidity = sensor.get_data_by_time(start_date, end_date)
+    time = tuple(_.isoformat() for _ in time)
     trace_temperature = graph_objs.Scattergl(
         x=time,
         y=temperature,
         name='Temperature',
         mode='lines',
+        yaxis='y1'
     )
     trace_humidity = graph_objs.Scattergl(
         x=time,
         y=humidity,
         name='Humidity',
         mode='lines',
+        yaxis='y2'
     )
-    fig.append_trace(trace_temperature, 1, 1)
-    fig.append_trace(trace_humidity, 1, 1)
-    with fig.batch_update():
-        fig.data[1].update(yaxis='y2')
-        fig.layout.update(
-            # width=600, height=500,
+    traces=[trace_temperature,trace_humidity]
+    return {
+            'data':traces,
+            'layout':dict(
             plot_bgcolor='#FFF',
             showlegend=True,
             legend=dict(x=0, y=1.2),
@@ -170,10 +166,8 @@ def update_sensor_gragh(start_date, end_date, n_clicks):
                 yref="y2"
             )
             ]
-
-        )
-    return fig
-
+            )
+            }
 
 @app.callback(Output(component_id='NAS-state',
                      component_property='children'),
@@ -193,4 +187,4 @@ def update_NAS_state_gragh(n_clicks, n_intervals):
 server = app.server
 
 if __name__ == '__main__':
-    app.run_server(debug=debug,host='0.0.0.0')
+    app.run_server(debug=True,host='0.0.0.0')
