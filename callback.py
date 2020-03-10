@@ -1,9 +1,9 @@
 import plotly.graph_objs as graph_objs
-from dash.dependencies import Input, Output
 
 from model import NASState
 
-def update_sensor_gragh(start_date, end_date, n_clicks,sensor):
+
+def update_sensor_gragh(start_date, end_date, n_clicks, sensor):
     time, temperature, humidity = sensor.get_data_by_time(start_date, end_date)
     time = tuple(_.isoformat() for _ in time)
     trace_temperature = graph_objs.Scattergl(
