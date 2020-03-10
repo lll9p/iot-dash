@@ -28,7 +28,8 @@ layout = html.Div(
                     style=tab_style,
                     selected_style=tab_selected_style,
                     children=[
-                        html.H2(children='NAS Monitor'),
+                        html.H2(children='Machine Online'),
+                        html.H2(children='NAS State'),
                         html.Button(
                             'Reflash NAS state.',
                             id='show-NAS-state'),
