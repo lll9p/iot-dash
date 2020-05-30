@@ -2,7 +2,7 @@
 
 debug = False
 loglevel = 'error'
-bind = "127.0.0.1:8050"
+bind = "0.0.0.0:8050"
 chdir = "/home/lao/data/monitor-dash"
 pidfile = "/var/log/gunicorn/gunicorn.pid"
 accesslog = "/var/log/gunicorn/access.log"
