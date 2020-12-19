@@ -58,7 +58,7 @@ layout = html.Div(
                             updatemode='bothdates',
                         ),
                         html.Button(
-                            'Reflash graph.',
+                            'Refresh graph.',
                             id='reflash-sensor-graph'),
                         dcc.Graph(
                             id='sensor-graph',

@@ -10,14 +10,14 @@ def update_sensor_gragh(start_date, end_date, n_clicks, sensor):
         x=time,
         y=temperature,
         name='Temperature',
-        mode='lines',
+        mode='markers',
         yaxis='y1'
     )
     trace_humidity = graph_objs.Scattergl(
         x=time,
         y=humidity,
         name='Humidity',
-        mode='lines',
+        mode='markers',
         yaxis='y2'
     )
     traces = [trace_temperature, trace_humidity]
