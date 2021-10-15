@@ -200,6 +200,8 @@ class NASState():
         partitions = psutil.disk_partitions()
         self.partitions = list()
         for _ in partitions:
+            if "docker" in _.mountpoint:
+                continue
             _usage = psutil.disk_usage(_.mountpoint)
             self.partitions.append(
                 Partition._make(
